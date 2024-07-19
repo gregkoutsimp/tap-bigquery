@@ -12,7 +12,6 @@ from . import utils
 import getschema
 
 
-
 LOGGER = utils.get_logger(__name__)
 
 # StitchData compatible timestamp meta data
@@ -29,6 +28,7 @@ BOOKMARK_KEY_NAME = "last_update"
 
 SERVICE_ACCOUNT_INFO_ENV_VAR = "GOOGLE_APPLICATION_CREDENTIALS_STRING"
 
+
 def get_bigquery_client():
     """Initialize a bigquery client from credentials file JSON,
     if in environment, else credentials file.
@@ -38,8 +38,13 @@ def get_bigquery_client():
     """
     credentials_json = environ.get(SERVICE_ACCOUNT_INFO_ENV_VAR)
     if credentials_json:
+        print(f"SERVICE_ACCOUNT_INFO_ENV_VAR is set to {credentials_json}.")
+    else:
+        print("SERVICE_ACCOUNT_INFO_ENV_VAR is not set.")
+    if credentials_json:
         return bigquery.Client.from_service_account_info(json.loads(credentials_json))
     return bigquery.Client()
+
 
 def _build_query(keys, filters=[], inclusive_start=True, limit=None):
     columns = ",".join(keys["columns"])
@@ -138,9 +143,9 @@ def do_discover(config, stream, output_schema_file=None,
             # "table-key-properties": ["id"],
             # "valid-replication-keys": ["date_modified"],
             # "schema-name": "users"
-            },
+        },
         "breadcrumb": []
-        }]
+    }]
 
     # TODO: Need to put something in here?
     key_properties = []
